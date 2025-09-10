@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import LoginScreen from './components/LoginScreen';
 import ChatScreen from './components/ChatScreen';
-// import ImageGenerator from './components/ImageGenerator'; // الخطوة 1: تعطيل الاستيراد
+import ImageGenerator from './components/ImageGenerator';
 
 type View = 'login' | 'chat' | 'image';
 
@@ -39,11 +39,6 @@ const App: React.FC = () => {
 
 
   const handleNavigate = useCallback((targetView: 'chat' | 'image') => {
-    // الخطوة 2: منع الانتقال إلى صفحة الصور
-    if (targetView === 'image') {
-      alert("Image generation feature is coming soon!"); // إظهار رسالة لطيفة
-      return; // إيقاف التنفيذ
-    }
     setView(targetView);
   }, []);
 
@@ -58,13 +53,8 @@ const App: React.FC = () => {
         return <LoginScreen onLogin={handleLogin} />;
       case 'chat':
         return <ChatScreen username={username} onNavigate={handleNavigate} onLogout={handleLogout} />;
-      
-      // الخطوة 3: تعطيل حالة عرض الصور
       case 'image':
-        // return <ImageGenerator username={username} onNavigate={handleNavigate} />;
-        // بدلاً من ذلك، نعود إلى الدردشة لتجنب أي خطأ
-        return <ChatScreen username={username} onNavigate={handleNavigate} onLogout={handleLogout} />;
-
+        return <ImageGenerator username={username} onNavigate={handleNavigate} />;
       default:
         return <LoginScreen onLogin={handleLogin} />;
     }

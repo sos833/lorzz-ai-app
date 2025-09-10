@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-// الخطوة 1: استيراد النوع الصحيح من المكتبة الصحيحة
-import { ChatSession } from '@google/generative-ai';
+import { Chat } from '@google/genai';
 import { createChatSession } from '../services/geminiService';
 import type { ChatMessage, Source } from '../types';
 
@@ -35,8 +34,7 @@ const saveMessages = (username: string, messages: ChatMessage[]) => {
       return msg;
     });
     localStorage.setItem(`lorzz-chat-history-${username}`, JSON.stringify(storableMessages));
-  } catch (error)
-  {
+  } catch (error) {
     console.error("Failed to save chat history:", error);
   }
 };
@@ -77,8 +75,7 @@ const getErrorMessage = (error: unknown): string => {
 export const useChat = (username: string) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // الخطوة 2: تحديث النوع هنا أيضًا
-  const chatRef = useRef<ChatSession | null>(null);
+  const chatRef = useRef<Chat | null>(null);
 
   // Load history or set welcome message on username change
   useEffect(() => {
@@ -138,16 +135,14 @@ export const useChat = (username: string) => {
         const imagePart = await fileToGenerativePart(file);
         parts.unshift(imagePart);
       }
-      
-      // الخطوة 3: إرسال مصفوفة الأجزاء مباشرة
-      const result = await chatRef.current.sendMessageStream(parts);
+
+      const stream = await chatRef.current.sendMessageStream({ message: parts });
       let accumulatedText = '';
       const groundingChunks = new Map<string, Source>();
 
-      // الخطوة 4: الوصول إلى البث الفعلي داخل الكائن result.stream
-      for await (const chunk of result.stream) {
-        // الخطوة 5: استخدام chunk.text() كدالة
-        accumulatedText += chunk.text();
+
+      for await (const chunk of stream) {
+        accumulatedText += chunk.text;
          chunk.candidates?.[0]?.groundingMetadata?.groundingChunks?.forEach(gc => {
             if (gc.web && gc.web.uri) {
                 groundingChunks.set(gc.web.uri, { uri: gc.web.uri, title: gc.web.title || gc.web.uri });
@@ -184,7 +179,7 @@ export const useChat = (username: string) => {
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, username]); // تحسين الأداء بإزالة 'messages'
+  }, [isLoading, username, messages]);
 
   return { messages, sendMessage, isLoading };
 };
