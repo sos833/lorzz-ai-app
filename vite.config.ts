@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
       define: {
         // لقد قمنا بحذف السطر الخاص بـ STABILITY_API_KEY
         // وأضفنا السطر الصحيح لـ CLIPDROP_API_KEY
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+         'process.env.API_KEY': JSON.stringify(env.API_KEY),
         'process.env.CLIPDROP_API_KEY': JSON.stringify(env.CLIPDROP_API_KEY)
       },
       resolve: {
