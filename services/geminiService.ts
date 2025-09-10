@@ -19,44 +19,30 @@ export const createChatSession = (): Chat => {
 
 // في ملف services/geminiService.ts
 
+
 export type AspectRatio = '1:1' | '16:9' | '9:16';
 
 export const generateImage = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
-  const apiKey = process.env.STABILITY_API_KEY;
-
-  // --- أسطر التحقيق الجديدة ---
-  console.log("--- STARTING IMAGE GENERATION DEBUG ---");
-  console.log("Attempting to use Stability Key read from environment:", apiKey);
+  // نستخدم الآن متغير بيئة جديد لمفتاح ClipDrop
+  const apiKey = process.env.CLIPDROP_API_KEY;
 
   if (!apiKey) {
-    console.error("FATAL: The STABILITY_API_KEY variable was not found by the code on Netlify.");
-    throw new Error("Stability AI API key not set");
+    throw new Error("ClipDrop API key not set");
   }
-  // --- نهاية أسطر التحقيق ---
 
-  let width = 1024;
-  let height = 1024;
-  if (aspectRatio === '16:9') { width = 1536; height = 864; } 
-  else if (aspectRatio === '9:16') { width = 864; height = 1536; }
+  const formData = new FormData();
+  formData.append('prompt', prompt);
+  formData.append('aspect_ratio', aspectRatio);
 
   try {
     const response = await fetch(
-      "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image",
+      "https://clipdrop-api.co/text-to-image/v1",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${apiKey}`,
+          'x-api-key': apiKey, // ClipDrop يستخدم هذا الهيدر
         },
-        body: JSON.stringify({
-          text_prompts: [{ text: prompt }],
-          cfg_scale: 7,
-          height: height,
-          width: width,
-          samples: 1,
-          steps: 30,
-        }),
+        body: formData,
       }
     );
 
@@ -64,15 +50,19 @@ export const generateImage = async (prompt: string, aspectRatio: AspectRatio): P
       throw new Error(`Non-200 response: ${await response.text()}`);
     }
 
-    const responseJSON: any = await response.json();
+    // ClipDrop تعيد الصورة مباشرة وليس JSON
+    const imageBlob = await response.blob();
+    
+    // تحويل الصورة إلى base64 لعرضها
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(imageBlob);
+    });
 
-    if (responseJSON.artifacts && responseJSON.artifacts.length > 0) {
-      return responseJSON.artifacts[0].base64;
-    } else {
-      throw new Error("لم يتم إنشاء أي صور.");
-    }
   } catch (error) {
-    console.error("Error generating image with Stability AI:", error);
+    console.error("Error generating image with ClipDrop:", error);
     throw new Error("حدث خطأ أثناء إنشاء الصورة. يرجى المحاولة مرة أخرى لاحقًا.");
   }
 };
