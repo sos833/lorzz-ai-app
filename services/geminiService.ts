@@ -17,26 +17,27 @@ export const createChatSession = (): Chat => {
   return chat;
 };
 
+// في ملف services/geminiService.ts
+
 export type AspectRatio = '1:1' | '16:9' | '9:16';
 
 export const generateImage = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
-  // نحن نستخدم الآن متغير بيئة جديد لمفتاح Stability AI
   const apiKey = process.env.STABILITY_API_KEY;
 
+  // --- أسطر التحقيق الجديدة ---
+  console.log("--- STARTING IMAGE GENERATION DEBUG ---");
+  console.log("Attempting to use Stability Key read from environment:", apiKey);
+
   if (!apiKey) {
+    console.error("FATAL: The STABILITY_API_KEY variable was not found by the code on Netlify.");
     throw new Error("Stability AI API key not set");
   }
+  // --- نهاية أسطر التحقيق ---
 
-  // تحويل نسبة العرض إلى الارتفاع إلى أبعاد بالبكسل
   let width = 1024;
   let height = 1024;
-  if (aspectRatio === '16:9') {
-    width = 1536;
-    height = 864;
-  } else if (aspectRatio === '9:16') {
-    width = 864;
-    height = 1536;
-  }
+  if (aspectRatio === '16:9') { width = 1536; height = 864; } 
+  else if (aspectRatio === '9:16') { width = 864; height = 1536; }
 
   try {
     const response = await fetch(
@@ -66,7 +67,6 @@ export const generateImage = async (prompt: string, aspectRatio: AspectRatio): P
     const responseJSON: any = await response.json();
 
     if (responseJSON.artifacts && responseJSON.artifacts.length > 0) {
-      // الصورة تأتي بتنسيق base64 مباشرة
       return responseJSON.artifacts[0].base64;
     } else {
       throw new Error("لم يتم إنشاء أي صور.");
