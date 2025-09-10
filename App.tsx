@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import LoginScreen from './components/LoginScreen';
 import ChatScreen from './components/ChatScreen';
-import ImageGenerator from './components/ImageGenerator';
+// import ImageGenerator from './components/ImageGenerator'; // تمت إزالته
 
-type View = 'login' | 'chat' | 'image';
+type View = 'login' | 'chat'; // تمت إزالة 'image'
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('login');
@@ -36,25 +36,19 @@ const App: React.FC = () => {
     setUsername('');
     setView('login');
   }, []);
-
-
-  const handleNavigate = useCallback((targetView: 'chat' | 'image') => {
-    setView(targetView);
+  
+  // دالة onNavigate لم تعد ضرورية، ولكن سنتركها فارغة لتجنب الأخطاء
+  const handleNavigate = useCallback(() => {
+    // لا تفعل شيئًا
   }, []);
 
-  const renderContent = () => {
-    // If we are still checking for a user, show a blank screen to prevent flicker
-    if (!username && view !== 'login') {
-        return null; 
-    }
 
+  const renderContent = () => {
     switch (view) {
       case 'login':
         return <LoginScreen onLogin={handleLogin} />;
       case 'chat':
         return <ChatScreen username={username} onNavigate={handleNavigate} onLogout={handleLogout} />;
-      case 'image':
-        return <ImageGenerator username={username} onNavigate={handleNavigate} />;
       default:
         return <LoginScreen onLogin={handleLogin} />;
     }

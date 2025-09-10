@@ -8,12 +8,13 @@ import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { PaperclipIcon } from './icons/PaperclipIcon';
 import { XCircleIcon } from './icons/XCircleIcon';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
-import { ImageIcon } from './icons/ImageIcon';
+// import { ImageIcon } from './icons/ImageIcon'; // لم نعد بحاجة لهذه الأيقونة
 import { LogoutIcon } from './icons/LogoutIcon';
 
 interface ChatScreenProps {
   username: string;
-  onNavigate: (view: 'image') => void;
+  // onNavigate لم تعد ضرورية، لكن نتركها لتجنب الأخطاء في App.tsx
+  onNavigate: (view: 'image') => void; 
   onLogout: () => void;
 }
 
@@ -256,16 +257,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ username, onNavigate, onLogout 
                     <span className="font-semibold text-cyan-600 dark:text-cyan-300">Lorzz AI</span>
                 </div>
              </div>
-             <div className="pt-4 border-t border-gray-200 dark:border-cyan-500/20">
-                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">أدوات</h3>
-                <button 
-                    onClick={() => onNavigate('image')}
-                    className="w-full flex items-center gap-3 p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 transition-colors"
-                >
-                    <ImageIcon />
-                    <span className="font-semibold">تخيل الصور</span>
-                </button>
-            </div>
+             {/* --- تم حذف قسم الأدوات وزر تخيل الصور من هنا --- */}
           </div>
            <div className="p-2 border-t border-gray-200 dark:border-cyan-500/20">
             <div className="flex items-center gap-2 p-2 rounded-md bg-gray-100 dark:bg-black/40">
