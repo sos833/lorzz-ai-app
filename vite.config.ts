@@ -1,15 +1,18 @@
 import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
-import react from '@vitejs/plugin-react'; // <-- أضف هذا السطر
+import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
-      plugins: [react()], // <-- أضف هذا السطر
+      // ---> أضف هذا السطر هنا <---
+      base: './', 
+      
+      plugins: [react()],
       define: {
-        // هذه الأسطر ممتازة، اتركها كما هي
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        'process.env.API_KEY': JSON.stringify(env.API_KEY),
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.STABILITY_API_KEY': JSON.stringify(env.STABILITY_API_KEY),
       },
       resolve: {
         alias: {
