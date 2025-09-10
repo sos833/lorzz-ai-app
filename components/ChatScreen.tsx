@@ -276,5 +276,4 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ username, onNavigate, onLogout 
     </div>
   );
 };
-
 export default ChatScreen;
