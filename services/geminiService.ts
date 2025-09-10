@@ -27,7 +27,11 @@ export const createChatSession = (): Chat => {
 
 export type AspectRatio = '1:1' | '16:9' | '9:16';
 
+// في ملف services/geminiService.ts
+
 export const generateImage = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
+  // ===> هذا هو السطر الأهم <===
+  // نحن نقرأ المفتاح من البيئة، وليس من نص ثابت
   const apiKey = process.env.CLIPDROP_API_KEY;
 
   if (!apiKey) {
@@ -37,9 +41,8 @@ export const generateImage = async (prompt: string, aspectRatio: AspectRatio): P
   const formData = new FormData();
   formData.append('prompt', prompt);
 
-  // ترجمة خيارات الواجهة إلى الأبعاد التي يفهمها ClipDrop
   let width = "1024";
-  let height = "1024"; // الافتراضي هو مربع 1:1
+  let height = "1024";
 
   if (aspectRatio === '16:9') {
     width = "1344";
@@ -49,7 +52,6 @@ export const generateImage = async (prompt: string, aspectRatio: AspectRatio): P
     height = "1344";
   }
   
-  // إضافة الأبعاد الصحيحة إلى الطلب
   formData.append('width', width);
   formData.append('height', height);
 
@@ -59,7 +61,7 @@ export const generateImage = async (prompt: string, aspectRatio: AspectRatio): P
       {
         method: "POST",
         headers: {
-          'x-api-key': apiKey,
+          'x-api-key': apiKey, // <-- نحن نستخدم المتغير هنا
         },
         body: formData,
       }
