@@ -9,10 +9,11 @@ export default defineConfig(({ mode }) => {
       base: './', 
       
       plugins: [react()],
-      define: {
+     define: {
         'process.env.API_KEY': JSON.stringify(env.API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.STABILITY_API_KEY': JSON.stringify(env.STABILITY_API_KEY),
+        // --- هذا هو التغيير المهم ---
+        'process.env.CLIPDROP_API_KEY': JSON.stringify(env.CLIPDROP_API_KEY)
       },
       resolve: {
         alias: {
